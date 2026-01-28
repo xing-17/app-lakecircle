@@ -1,0 +1,37 @@
+[project]
+name = "app-lakecircle"
+version = "0.1.1"
+description = "LakeCircle Application for s3 datalake management"
+readme = "README.md"
+authors = [
+    { name = "Xing Xing", email = "x.xing.work@gmail.com" }
+]
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "lib-x17-log",
+    "lib-x17-datawork",
+    "boto3"
+]
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+fix = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+force-single-line = false
