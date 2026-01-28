@@ -6,6 +6,37 @@ from app.variable.varkind import VarKind
 
 VARIABLES = [
     Environ(
+        name="LCC_ACTION_PARAMS",
+        kind=VarKind.DICT,
+        default={},
+        description="APP ACTION PARAMETERS, e.g., {'force': True}",
+    ),
+    Environ(
+        name="LCC_ACTIONS",
+        kind=VarKind.LIST,
+        default=["SYNC"],
+        choice=[
+            "SYNC",  # Apply changes to the bucket
+            "DRYRUN",  # Simulate actions without making changes
+        ],
+        description="APP ACTIONS, choose from: [SYNC, DRYRUN]",
+    ),
+    Environ(
+        name="LCC_ENDPOINT",
+        kind=VarKind.STRING,
+        description="APP ENDPOINT, e.g.,s3://bucket-name/prefix/path",
+    ),
+    Environ(
+        name="LCC_AWS_ACCOUNT",
+        kind=VarKind.STRING,
+        description="APP AWS ACCOUNT NUMBER, e.g., 123456789012",
+    ),
+    Environ(
+        name="LCC_AWS_REGION",
+        kind=VarKind.STRING,
+        description="APP AWS REGION, e.g., us-west-2",
+    ),
+    Environ(
         name="LCC_APP_LEVEL",
         kind=VarKind.STRING,
         default="INFO",
@@ -16,8 +47,8 @@ VARIABLES = [
         name="LCC_LOG_FORMAT",
         kind=VarKind.STRING,
         default="TREE",
-        choice=["TREE", "TEXT"],
-        description="APP LOG FORMAT, choose from: [TREE, TEXT]",
+        choice=["TREE", "TEXT", "COLORTREE", "COLORTEXT"],
+        description="APP LOG FORMAT, choose from: [TREE, TEXT, COLORTREE, COLORTEXT]",
     ),
 ]
 CONSTANTS = [

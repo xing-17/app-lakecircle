@@ -64,8 +64,67 @@ class Payload(Component):
         self,
         data: dict[str, Any],
     ) -> dict[str, dict[str, Any]]:
-        structured = {}
-        return structured
+        self.debug(
+            "Recieved context Ok.",
+            context=data,
+        )
+        # Assert LCC_ENDPOINT is present
+        endpoint = data.get("LCC_ENDPOINT")
+        if not endpoint:
+            msg = "LCC_ENDPOINT is required in payload"
+            self.error(msg)
+            raise ValueError(msg)
+        else:
+            if not endpoint.endswith("/"):
+                endpoint += "/"
+
+        # Assert AWS account and region are present
+        aws_account = data.get("LCC_AWS_ACCOUNT")
+        aws_region = data.get("LCC_AWS_REGION")
+        if not aws_account:
+            msg = "LCC_AWS_ACCOUNT is required in payload"
+            self.error(msg)
+            raise ValueError(msg)
+        if not aws_region:
+            msg = "LCC_AWS_REGION is required in payload"
+            self.error(msg)
+            raise ValueError(msg)
+
+        # Build structured content
+        result = {
+            "app": {
+                "name": data.get("LCC_APP_NAME"),
+                "alias": data.get("LCC_APP_ALIAS"),
+                "level": data.get("LCC_APP_LEVEL"),
+                "logformat": data.get("LCC_LOG_FORMAT"),
+            },
+            "endpoint": {
+                # Base endpoint URI for LakeCircle
+                "base": endpoint,
+                # Apply definition to current and previous endpoints
+                "current": f"{endpoint}current/",
+                "previous": f"{endpoint}previous/",
+                "history": f"{endpoint}history/",
+                # Manual definition endpoint
+                "definition": f"{endpoint}definition/",
+                # Data and log endpoints
+                "data": f"{endpoint}data/",
+                "log": f"{endpoint}log/",
+            },
+            "aws": {
+                "account": data.get("LCC_AWS_ACCOUNT"),
+                "region": data.get("LCC_AWS_REGION"),
+            },
+            "work": {
+                "actions": data.get("LCC_ACTIONS"),
+                "params": data.get("LCC_ACTION_PARAMS"),
+            },
+        }
+        self.info(
+            "Payload built successfully.",
+            context=result,
+        )
+        return result
 
     def __contains__(self, key: str) -> bool:
         return self.has(key)
