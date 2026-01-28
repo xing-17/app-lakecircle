@@ -36,14 +36,6 @@ class Environ(Variable):
         cls,
         data: dict[str, Any],
     ) -> Variable:
-        """
-        Desc:
-            - Build an Environ instance from a dictionary.
-        Args:
-            - data[dict[str, Any]], Dictionary containing environ fields.
-        Returns:
-            - Variable, New Environ instance.
-        """
         return cls(
             name=data.get("name"),
             kind=data.get("kind"),
@@ -72,12 +64,6 @@ class Environ(Variable):
     def get_value(
         self,
     ) -> Any:
-        """
-        Desc:
-            - Read and parse environment value.
-        Returns:
-            - Any, Parsed value from environment or default.
-        """
         raw = os.environ.get(self.name)
         if raw is None:
             return self.default

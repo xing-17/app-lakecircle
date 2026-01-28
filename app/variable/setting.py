@@ -48,6 +48,16 @@ class Setting(Component):
     ```
     """
 
+    @classmethod
+    def from_dict(
+        cls,
+        data: dict[str, Any],
+    ) -> Setting:
+        return cls(
+            variables=data.get("variables"),
+            constants=data.get("constants"),
+        )
+
     def __init__(
         self,
         parent: Component | None = None,
@@ -145,9 +155,15 @@ class Setting(Component):
     ) -> bool:
         return name in self.variables or name in self.constants
 
-    def __len__(
-        self,
-    ) -> int:
+    def __getitem__(self, name: str) -> Any:
+        if name in self.variables:
+            return self.variables[name].value
+        if name in self.constants:
+            return self.constants[name].value
+        msg = f"Name not found: {name!r}"
+        raise KeyError(msg)
+
+    def __len__(self) -> int:
         return len(self.variables) + len(self.constants)
 
     def describe(
@@ -183,16 +199,6 @@ class Setting(Component):
         self.constants[name] = constant
         self.context = self.build()
 
-    @classmethod
-    def from_dict(
-        cls,
-        data: dict[str, Any],
-    ) -> Setting:
-        return cls(
-            variables=data.get("variables"),
-            constants=data.get("constants"),
-        )
-
     def to_dict(self) -> dict[str, Any]:
         result: dict[str, Any] = {
             "variables": [],
@@ -203,11 +209,3 @@ class Setting(Component):
         for constant in self.constants.values():
             result["constants"].append(constant.to_dict())
         return result
-
-    def __getitem__(self, name: str) -> Any:
-        if name in self.variables:
-            return self.variables[name].value
-        if name in self.constants:
-            return self.constants[name].value
-        msg = f"Name not found: {name!r}"
-        raise KeyError(msg)

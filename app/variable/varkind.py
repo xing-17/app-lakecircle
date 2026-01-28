@@ -47,14 +47,6 @@ class VarKind(str, Enum):
 
     @classmethod
     def from_str(cls, string: str) -> VarKind:
-        """
-        Desc:
-            - Parse VarKind from string (case-insensitive).
-        Args:
-            - string[str], String representation of the kind.
-        Returns:
-            - VarKind, Parsed kind or STRING as default.
-        """
         for dkind in VarKind:
             if dkind.value.lower() == string.lower():
                 return dkind
@@ -62,14 +54,6 @@ class VarKind(str, Enum):
 
     @classmethod
     def from_any(cls, value: Any) -> VarKind:
-        """
-        Desc:
-            - Resolve VarKind from any supported input type.
-        Args:
-            - value[Any], VarKind instance or string.
-        Returns:
-            - VarKind, Resolved kind.
-        """
         if isinstance(value, VarKind):
             return value
         if isinstance(value, str):

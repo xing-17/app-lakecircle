@@ -41,14 +41,6 @@ class Variable(ABC):
         cls,
         data: dict[str, Any],
     ) -> Variable:
-        """
-        Desc:
-            - Create a Variable instance from a dictionary.
-        Args:
-            - data[dict[str, Any]], Dictionary containing variable fields.
-        Returns:
-            - Variable, New Variable instance.
-        """
         return cls(
             name=data.get("name"),
             kind=data.get("kind"),
@@ -99,7 +91,14 @@ class Variable(ABC):
         self,
         choice: list[Any] | None,
     ) -> list[Any] | None:
-        return [item for item in choice if item is not None] if choice else None
+        if not choice:
+            return None
+        else:
+            choices = []
+            for item in choice:
+                if item is not None:
+                    choices.append(item)
+            return choices
 
     def __str__(self) -> str:
         return self.name
@@ -157,10 +156,19 @@ class Variable(ABC):
     ) -> list[str]:
         if isinstance(raw, list):
             return [str(item) for item in raw]
-        raw = str(raw).strip()
-        if not raw:
-            return []
-        return [item.strip() for item in raw.split(",") if item.strip()]
+        if isinstance(raw, str):
+            raw = str(raw).strip()
+            if not raw:
+                return []
+            else:
+                result = []
+                for item in raw.split(","):
+                    item = item.strip()
+                    if item:
+                        result.append(item)
+                return result
+        msg = f"Invalid list value: {raw!r}."
+        raise ValueError(msg)
 
     def _parse_dict(
         self,
@@ -195,31 +203,25 @@ class Variable(ABC):
             supported = [k.value for k in VarKind]
             msg = f"Unsupported variable kind: {self.kind!r}. Supported kinds: {supported}"
             raise TypeError(msg)
-        if self.choice is not None and value not in self.choice:
-            msg = f"Value {value!r} not in choice {self.choice!r}."
-            raise ValueError(msg)
+        if self.choice is not None:
+            if self.kind == VarKind.LIST:
+                if not all(item in self.choice for item in value):
+                    msg = f"Value {value!r} not in choice {self.choice!r}."
+                    raise ValueError(msg)
+            else:
+                if value not in self.choice:
+                    msg = f"Value {value!r} not in choice {self.choice!r}."
+                    raise ValueError(msg)
         return value
 
     def get_value(
         self,
     ) -> Any:
-        """
-        Desc:
-            - Get the current value (must be implemented by subclasses).
-        Returns:
-            - Any, The current value.
-        """
         raise NotImplementedError()
 
     def describe(
         self,
     ) -> dict[str, Any]:
-        """
-        Desc:
-            - Produce a compact description dictionary.
-        Returns:
-            - dict[str, Any], Description containing name, kind, and optional fields.
-        """
         result = {
             "name": self.name,
             "kind": str(self.kind),
@@ -237,12 +239,6 @@ class Variable(ABC):
     def to_dict(
         self,
     ) -> dict[str, Any]:
-        """
-        Desc:
-            - Serialize all fields into a dictionary.
-        Returns:
-            - dict[str, Any], Dictionary containing all variable fields.
-        """
         return {
             "name": self.name,
             "kind": str(self.kind),

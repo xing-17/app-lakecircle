@@ -32,14 +32,6 @@ class Constant(Variable):
         cls,
         data: dict[str, Any],
     ) -> Variable:
-        """
-        Desc:
-            - Build a Constant instance from a dictionary.
-        Args:
-            - data[dict[str, Any]], Dictionary containing constant fields.
-        Returns:
-            - Variable, New Constant instance.
-        """
         return cls(
             name=data.get("name"),
             kind=data.get("kind"),
@@ -65,14 +57,6 @@ class Constant(Variable):
         self,
         value: Any,
     ) -> Any:
-        """
-        Desc:
-            - Parse and validate the provided value.
-        Args:
-            - value[Any], Raw value to parse.
-        Returns:
-            - Any, Parsed value according to kind.
-        """
         if value is None:
             return None
         return self._parse_by_kind(value)
