@@ -16,6 +16,7 @@ VARIABLES = [
         kind=VarKind.LIST,
         default=["SYNC"],
         choice=[
+            "SUMMARISE",  # Summarize the lifecycle configuration
             "SYNC",  # Apply changes to the bucket
             "DRYRUN",  # Simulate actions without making changes
         ],

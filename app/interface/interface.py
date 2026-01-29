@@ -12,6 +12,7 @@ from app.interface.constants import CONSTANTS, VARIABLES
 from app.interface.payload import Payload
 from app.variable.setting import Setting
 from app.work.sync import SyncWork
+from app.work.summarise import SummariseWork
 
 
 class Interface(Component):
@@ -70,6 +71,13 @@ class Interface(Component):
         for action in actions:
             if action.upper() == "SYNC":
                 work = SyncWork(
+                    parent=self,
+                    payload=self.payload,
+                )
+                self.info(f"Executing action '{action}'")
+                work.run()
+            elif action.upper() == "SUMMARISE":
+                work = SummariseWork(
                     parent=self,
                     payload=self.payload,
                 )
