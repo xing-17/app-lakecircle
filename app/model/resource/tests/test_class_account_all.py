@@ -55,15 +55,9 @@ class TestAccount:
     def test_list_buckets_with_buckets(self):
         """Test list_buckets with existing buckets."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="bucket-1",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        client.create_bucket(
-            Bucket="bucket-2",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="bucket-1", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+        client.create_bucket(Bucket="bucket-2", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
@@ -80,11 +74,8 @@ class TestAccount:
     def test_list_buckets_returns_bucket_objects(self):
         """Test that list_buckets returns Bucket objects."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="test-bucket",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="test-bucket", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
@@ -97,22 +88,16 @@ class TestAccount:
     def test_load_populates_buckets_dict(self):
         """Test that load() populates the buckets dictionary."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="bucket-1",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        client.create_bucket(
-            Bucket="bucket-2",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="bucket-1", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+        client.create_bucket(Bucket="bucket-2", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         account.load()
-        
+
         assert len(account.buckets) == 2
         assert "bucket-1" in account.buckets
         assert "bucket-2" in account.buckets
@@ -122,22 +107,16 @@ class TestAccount:
     def test_list_bucketnames(self):
         """Test list_bucketnames returns list of bucket names."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="bucket-a",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        client.create_bucket(
-            Bucket="bucket-b",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="bucket-a", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+        client.create_bucket(Bucket="bucket-b", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         account.load()
-        
+
         bucket_names = account.list_bucketnames()
         assert isinstance(bucket_names, list)
         assert len(bucket_names) == 2
@@ -148,18 +127,15 @@ class TestAccount:
     def test_describe_returns_dict(self):
         """Test that describe returns a dictionary."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="test-bucket",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="test-bucket", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         account.load()
-        
+
         result = account.describe()
         assert isinstance(result, dict)
         assert "account" in result
@@ -175,18 +151,15 @@ class TestAccount:
     def test_to_dict_returns_serializable_dict(self):
         """Test that to_dict returns a serializable dictionary."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="test-bucket",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="test-bucket", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         account.load()
-        
+
         result = account.to_dict()
         assert isinstance(result, dict)
         assert "account" in result
@@ -224,18 +197,15 @@ class TestAccount:
     def test_list_buckets_filters_none_names(self):
         """Test that list_buckets handles buckets without names."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="valid-bucket",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="valid-bucket", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         buckets = account.list_buckets()
-        
+
         # All returned buckets should have names
         assert all(bucket.name for bucket in buckets)
 
@@ -243,18 +213,15 @@ class TestAccount:
     def test_bucket_inherits_account_and_region(self):
         """Test that buckets created by Account inherit account and region."""
         client = boto3.client("s3", region_name="us-west-2")
-        client.create_bucket(
-            Bucket="test-bucket",
-            CreateBucketConfiguration={"LocationConstraint": "us-west-2"}
-        )
-        
+        client.create_bucket(Bucket="test-bucket", CreateBucketConfiguration={"LocationConstraint": "us-west-2"})
+
         account = Account(
             account="123456789012",
             region="us-west-2",
             client=client,
         )
         buckets = account.list_buckets()
-        
+
         bucket = buckets[0]
         assert bucket.account == "123456789012"
         assert bucket.region == "us-west-2"
@@ -265,9 +232,9 @@ class TestAccount:
         """Test creating multiple Account objects with different regions."""
         client1 = boto3.client("s3", region_name="us-west-2")
         client2 = boto3.client("s3", region_name="us-east-1")
-        
+
         account1 = Account(account="111111111111", region="us-west-2", client=client1)
         account2 = Account(account="222222222222", region="us-east-1", client=client2)
-        
+
         assert account1.account != account2.account
         assert account1.region != account2.region
