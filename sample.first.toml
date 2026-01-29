@@ -1,0 +1,21 @@
+[bucket]
+name = 'snt-research-dev-datalake'
+
+[lifecycleconfiguration.rules.1]
+status = 'Enabled'
+prefix = 'poc-baseline/'
+expiration = { days = 365 }
+transitions = [
+    { days = 30, storageclass = 'STANDARD_IA' },
+    { days = 90, storageclass = 'GLACIER' },
+]
+
+[lifecycleconfiguration.rules.2]
+status = 'Enabled'
+prefix = 'logs/'
+expiration = { days = 360 }
+transitions = [
+    { days = 60, storageclass = 'STANDARD_IA' },
+    { days = 120, storageclass = 'GLACIER' },
+    { days = 300, storageclass = 'DEEP_ARCHIVE' },
+]

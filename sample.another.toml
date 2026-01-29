@@ -1,0 +1,12 @@
+[bucket]
+name = 'snt-research-dev-datalake'
+
+[lifecycleconfiguration.rules.1]
+status = 'Enabled'
+prefix = 'poc-baseline/'
+expiration = { days = 365 }
+transitions = [
+    { days = 30, storageclass = 'STANDARD_IA' },
+    { days = 90, storageclass = 'GLACIER' },
+]
+
