@@ -11,8 +11,8 @@ from app.base.component import Component
 from app.interface.constants import CONSTANTS, VARIABLES
 from app.interface.payload import Payload
 from app.variable.setting import Setting
-from app.work.sync import SyncWork
 from app.work.summarise import SummariseWork
+from app.work.sync import SyncWork
 
 
 class Interface(Component):
